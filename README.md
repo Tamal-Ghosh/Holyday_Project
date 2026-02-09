@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ShipVoyage (Android) - Admin Panel Only
 
 ShipVoyage is an admin-only cruise management Android app built with Java, Supabase PostgreSQL, and Material Design 3. It provides real-time admin management of tours, ships, rooms, schedules, bookings, and customers.
@@ -240,3 +241,6 @@ MIT (see `LICENSE`)
 
 See `MIGRATION_GUIDE.md` for detailed migration information from Firebase to Supabase.
 ````
+=======
+# Holyday_Project
+>>>>>>> 0ad1e1681dc8d94530bfaba55fe058803001256f
