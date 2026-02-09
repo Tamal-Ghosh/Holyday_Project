@@ -33,7 +33,6 @@ public class RoomSelectionDialog extends DialogFragment {
 
     private RecyclerView roomsRecyclerView;
     private TextView tourInstanceInfoText;
-    private TextView totalPriceText;
     private Button cancelButton;
     private Button continueButton;
 
@@ -90,7 +89,6 @@ public class RoomSelectionDialog extends DialogFragment {
 
         roomsRecyclerView = view.findViewById(R.id.roomsRecyclerView);
         tourInstanceInfoText = view.findViewById(R.id.tourInstanceInfoText);
-        totalPriceText = view.findViewById(R.id.totalPriceText);
         cancelButton = view.findViewById(R.id.cancelButton);
         continueButton = view.findViewById(R.id.continueButton);
 
@@ -106,7 +104,6 @@ public class RoomSelectionDialog extends DialogFragment {
 
         // Setup RecyclerView
         adapter = new BookingRoomAdapter((selectedRooms, totalPrice) -> {
-            totalPriceText.setText(String.format("$%.2f", totalPrice));
             continueButton.setEnabled(!selectedRooms.isEmpty());
         });
         roomsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
