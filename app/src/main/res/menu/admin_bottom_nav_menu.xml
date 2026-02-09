@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/dashboard"
+        android:title="Dashboard" />
+
+    <item
+        android:id="@+id/nav_manage"
+        android:icon="@drawable/manage"
+        android:title="Manage" />
+
+    <item
+        android:id="@+id/nav_bookings"
+        android:icon="@drawable/bookings"
+        android:title="Bookings" />
+
+    <item
+        android:id="@+id/nav_customers"
+        android:icon="@drawable/customer"
+        android:title="Customers" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/profile"
+        android:title="Profile" />
+
+</menu>
