@@ -61,7 +61,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="16dp"
             android:padding="12dp"
-            android:background="@android:drawable/btn_dropdown" />
+            android:background="@drawable/spinner_dropdown_bg" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/customersRecyclerView"

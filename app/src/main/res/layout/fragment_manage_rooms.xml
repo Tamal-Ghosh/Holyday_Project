@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Select Ship"
+            android:text="Select Ship:"
             android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -76,7 +76,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:padding="12dp"
-            android:background="@android:drawable/btn_dropdown" />
+            android:background="@drawable/spinner_dropdown_bg" />
     </LinearLayout>
 
     <!-- Form Section -->
@@ -100,7 +100,7 @@
             <TextView
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:text="Room Number"
+                android:text="Room Number:"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -132,7 +132,7 @@
             <TextView
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:text="Room Type"
+                android:text="Room Type:"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -143,7 +143,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:padding="12dp"
-                android:background="@android:drawable/btn_dropdown" />
+                android:background="@drawable/spinner_dropdown_bg" />
         </LinearLayout>
 
         <View

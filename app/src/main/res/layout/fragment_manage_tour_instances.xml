@@ -69,7 +69,7 @@
             <TextView
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:text="Select Tour"
+                android:text="Select Tour:"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -80,7 +80,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:padding="12dp"
-                android:background="@android:drawable/btn_dropdown" />
+                android:background="@drawable/spinner_dropdown_bg" />
         </LinearLayout>
 
         <View
@@ -99,7 +99,7 @@
             <TextView
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:text="Select Ship"
+                android:text="Select Ship:"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -110,7 +110,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:padding="12dp"
-                android:background="@android:drawable/btn_dropdown" />
+                android:background="@drawable/spinner_dropdown_bg" />
         </LinearLayout>
 
         <View
@@ -129,7 +129,7 @@
             <TextView
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:text="Start Date"
+                android:text="Start Date:"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -162,7 +162,7 @@
             <TextView
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:text="End Date"
+                android:text="End Date:"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
