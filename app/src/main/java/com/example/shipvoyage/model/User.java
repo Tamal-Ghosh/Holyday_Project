@@ -15,6 +15,7 @@ public class User {
     public String roomNumber;
     public int adultCount;
     public int childCount;
+    public double advanceAmount;
     public User() {}
     public User(String id, String username, String email, String phone, String role, long createdAt, String profileImagePath) {
         this.id = id;
@@ -126,6 +127,14 @@ public class User {
 
     public void setChildCount(int childCount) {
         this.childCount = childCount;
+    }
+
+    public double getAdvanceAmount() {
+        return advanceAmount;
+    }
+
+    public void setAdvanceAmount(double advanceAmount) {
+        this.advanceAmount = advanceAmount;
     }
 
     public String getPassword() {

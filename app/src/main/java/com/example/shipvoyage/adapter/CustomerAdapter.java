@@ -33,7 +33,7 @@ public class CustomerAdapter extends ListAdapter<User, CustomerAdapter.CustomerV
         private TextView customerName;
         private TextView adultCount;
         private TextView childCount;
-        private TextView customerEmail;
+        private TextView advanceAmount;
         private TextView customerPhone;
         private TextView customerPayment;
         private Button viewBtn;
@@ -45,7 +45,7 @@ public class CustomerAdapter extends ListAdapter<User, CustomerAdapter.CustomerV
             customerName = itemView.findViewById(R.id.customerName);
             adultCount = itemView.findViewById(R.id.adultCount);
             childCount = itemView.findViewById(R.id.childCount);
-            customerEmail = itemView.findViewById(R.id.customerEmail);
+            advanceAmount = itemView.findViewById(R.id.advanceAmount);
             customerPhone = itemView.findViewById(R.id.customerPhone);
             customerPayment = itemView.findViewById(R.id.customerPayment);
             viewBtn = itemView.findViewById(R.id.viewBtn);
@@ -65,8 +65,11 @@ public class CustomerAdapter extends ListAdapter<User, CustomerAdapter.CustomerV
                 childCount.setText(String.valueOf(Math.max(0, customer.getChildCount())));
             }
             
+            if (advanceAmount != null) {
+                advanceAmount.setText(String.format("৳%.2f", customer.getAdvanceAmount()));
+            }
+            
             customerName.setText(customer.getName() != null ? customer.getName() : "N/A");
-            customerEmail.setText(customer.getEmail() != null ? customer.getEmail() : "N/A");
             customerPhone.setText(customer.getPhone() != null ? customer.getPhone() : "N/A");
             customerPayment.setText(customer.getPaymentStatus() != null ? customer.getPaymentStatus() : "Pending");
             viewBtn.setOnClickListener(v -> {

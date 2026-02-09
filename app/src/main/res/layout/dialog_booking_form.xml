@@ -138,28 +138,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Total Amount -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total Amount"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Total Amount">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/totalPaymentInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
         <!-- Advance Amount -->
         <TextView
             android:layout_width="wrap_content"
@@ -216,6 +194,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Total Amount -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Amount"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Total Amount">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/totalPaymentInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

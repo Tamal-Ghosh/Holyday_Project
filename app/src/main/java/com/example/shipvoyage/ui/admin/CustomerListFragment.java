@@ -299,6 +299,7 @@ public class CustomerListFragment extends Fragment {
                             customer.setRoomNumber(room != null ? room.getRoomNumber() : "N/A");
                             customer.setAdultCount(Math.max(0, booking.getAdultCount()));
                             customer.setChildCount(Math.max(0, booking.getChildCount()));
+                            customer.setAdvanceAmount(booking.getPaidAmount());
                             String paymentStatus = booking.getDueAmount() > 0 ? "Due" : "Paid";
                             customer.setPaymentStatus(paymentStatus);
                             uniqueCustomers.put(key, customer);
