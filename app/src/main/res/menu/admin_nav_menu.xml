@@ -25,6 +25,10 @@
                 android:icon="@android:drawable/ic_menu_sort_by_size"
                 android:title="Manage Rooms" />
             <item
+                android:id="@+id/nav_room_types"
+                android:icon="@android:drawable/ic_menu_sort_by_size"
+                android:title="Manage Room Types" />
+            <item
                 android:id="@+id/nav_featured_photos"
                 android:icon="@android:drawable/ic_menu_gallery"
                 android:title="Featured Photos" />

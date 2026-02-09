@@ -3,27 +3,73 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_small"
-    app:cardElevation="@dimen/elevation_small"
-    app:cardCornerRadius="@dimen/corner_radius_medium"
-    style="@style/CardStyle">
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp"
+    android:background="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
+        <!-- Info List -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <!-- Room Type -->
+            <TextView
+                android:id="@+id/roomType"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:text="Panorama Duplex Suite"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Room Number -->
+            <TextView
+                android:id="@+id/roomNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="306"
+                android:textSize="13sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name: "
+                    android:textSize="13sp"
+                    android:textColor="#666666" />
+                
+                <TextView
+                    android:id="@+id/customerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="John Doe"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333" />
+            </LinearLayout>
+
+            <!-- Adult & Child Count -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -33,148 +79,118 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Name: "
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#6B7280" />
+                        android:text="Adult: "
+                        android:textSize="13sp"
+                        android:textColor="#666666" />
 
                     <TextView
-                        android:id="@+id/customerName"
+                        android:id="@+id/adultCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Customer Name"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary" />
+                        android:text="2"
+                        android:textSize="13sp"
+                        android:textColor="#333333" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="6dp">
+                    android:layout_marginTop="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Email: "
-                        android:textSize="14sp"
-                        android:textColor="#6B7280" />
+                        android:text="Child: "
+                        android:textSize="13sp"
+                        android:textColor="#666666" />
 
                     <TextView
-                        android:id="@+id/customerEmail"
+                        android:id="@+id/childCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="email@example.com"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary" />
+                        android:text="1"
+                        android:textSize="13sp"
+                        android:textColor="#333333" />
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Phone: "
-                        android:textSize="14sp"
-                        android:textColor="#6B7280" />
-
-                    <TextView
-                        android:id="@+id/customerPhone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+1234567890"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary" />
-                </LinearLayout>
-
             </LinearLayout>
 
-            <LinearLayout
+            <!-- Misc (optional info) -->
+            <TextView
+                android:id="@+id/miscInfo"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Misc"
+                android:textSize="12sp"
+                android:textColor="#999999"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
+
+            <!-- Email -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_marginTop="4dp">
 
-                <ImageButton
-                    android:id="@+id/viewBtn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="View"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/baseline_edit_24"
-                    android:tint="#26A65B" />
-
-                <ImageButton
-                    android:id="@+id/deleteBtn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Delete"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/baseline_delete_24"
-                    android:tint="#E74C3C" />
-
+                <TextView
+                    android:id="@+id/customerEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="email@example.com"
+                    android:textSize="12sp"
+                    android:textColor="#333333" />
             </LinearLayout>
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:background="@color/divider" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
+            <!-- Phone / Company Info -->
             <TextView
+                android:id="@+id/customerPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tour Instance: "
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#6B7280" />
+                android:text="With Panorama Trade Com"
+                android:textSize="11sp"
+                android:textColor="#999999"
+                android:layout_marginTop="2dp" />
 
-            <TextView
-                android:id="@+id/customerInstance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Example Tour"
-                android:textSize="13sp"
-                android:textColor="@color/text_primary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Payment Status: "
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#6B7280" />
-
+            <!-- Payment Status (Hidden - for data binding) -->
             <TextView
                 android:id="@+id/customerPayment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pending"
-                android:textSize="13sp"
-                android:textColor="@color/text_primary" />
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/viewBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Edit"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:paddingHorizontal="16dp"
+                android:backgroundTint="#4CAF50" />
+
+            <Button
+                android:id="@+id/deleteBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:text="Delete"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:paddingHorizontal="16dp"
+                android:backgroundTint="#F44336" />
+
         </LinearLayout>
 
     </LinearLayout>

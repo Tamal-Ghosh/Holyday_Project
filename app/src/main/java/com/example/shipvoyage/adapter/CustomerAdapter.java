@@ -2,7 +2,7 @@ package com.example.shipvoyage.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -28,29 +28,47 @@ public class CustomerAdapter extends ListAdapter<User, CustomerAdapter.CustomerV
         holder.bind(customer, listener);
     }
     public static class CustomerViewHolder extends RecyclerView.ViewHolder {
+        private TextView roomType;
+        private TextView roomNumber;
         private TextView customerName;
+        private TextView adultCount;
+        private TextView childCount;
         private TextView customerEmail;
         private TextView customerPhone;
-        private TextView customerInstance;
         private TextView customerPayment;
-        private ImageButton viewBtn;
-        private ImageButton deleteBtn;
+        private Button viewBtn;
+        private Button deleteBtn;
         public CustomerViewHolder(@NonNull View itemView) {
             super(itemView);
+            roomType = itemView.findViewById(R.id.roomType);
+            roomNumber = itemView.findViewById(R.id.roomNumber);
             customerName = itemView.findViewById(R.id.customerName);
+            adultCount = itemView.findViewById(R.id.adultCount);
+            childCount = itemView.findViewById(R.id.childCount);
             customerEmail = itemView.findViewById(R.id.customerEmail);
             customerPhone = itemView.findViewById(R.id.customerPhone);
-            customerInstance = itemView.findViewById(R.id.customerInstance);
             customerPayment = itemView.findViewById(R.id.customerPayment);
             viewBtn = itemView.findViewById(R.id.viewBtn);
             deleteBtn = itemView.findViewById(R.id.deleteBtn);
         }
         public void bind(User customer, OnCustomerClickListener listener) {
-            customerName.setText(customer.getName());
-            customerEmail.setText(customer.getEmail());
-            customerPhone.setText(customer.getPhone());
-            customerInstance.setText("Tour Instance: " + (customer.getLastInstance() != null ? customer.getLastInstance() : "N/A"));
-            customerPayment.setText("Payment: " + (customer.getPaymentStatus() != null ? customer.getPaymentStatus() : "N/A"));
+            if (roomType != null) {
+                roomType.setText(customer.getRoomType() != null ? customer.getRoomType() : "Room Type");
+            }
+            if (roomNumber != null) {
+                roomNumber.setText(customer.getRoomNumber() != null ? customer.getRoomNumber() : "N/A");
+            }
+            if (adultCount != null) {
+                adultCount.setText(String.valueOf(Math.max(0, customer.getAdultCount())));
+            }
+            if (childCount != null) {
+                childCount.setText(String.valueOf(Math.max(0, customer.getChildCount())));
+            }
+            
+            customerName.setText(customer.getName() != null ? customer.getName() : "N/A");
+            customerEmail.setText(customer.getEmail() != null ? customer.getEmail() : "N/A");
+            customerPhone.setText(customer.getPhone() != null ? customer.getPhone() : "N/A");
+            customerPayment.setText(customer.getPaymentStatus() != null ? customer.getPaymentStatus() : "Pending");
             viewBtn.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onViewClick(customer);
@@ -66,6 +84,12 @@ public class CustomerAdapter extends ListAdapter<User, CustomerAdapter.CustomerV
     private static class CustomerDiffCallback extends DiffUtil.ItemCallback<User> {
         @Override
         public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
+            if (oldItem.getId() == null && newItem.getId() == null) {
+                return oldItem == newItem;
+            }
+            if (oldItem.getId() == null || newItem.getId() == null) {
+                return false;
+            }
             return oldItem.getId().equals(newItem.getId());
         }
         @Override

@@ -25,9 +25,11 @@ import com.example.shipvoyage.R;
 import com.example.shipvoyage.adapter.CustomerAdapter;
 import com.example.shipvoyage.dao.BookingDAO;
 import com.example.shipvoyage.model.Booking;
+import com.example.shipvoyage.dao.RoomDAO;
 import com.example.shipvoyage.dao.TourDAO;
 import com.example.shipvoyage.dao.TourInstanceDAO;
 import com.example.shipvoyage.dao.UserDAO;
+import com.example.shipvoyage.model.Room;
 import com.example.shipvoyage.model.Tour;
 import com.example.shipvoyage.model.TourInstance;
 import com.example.shipvoyage.model.User;
@@ -44,6 +46,7 @@ public class CustomerListFragment extends Fragment {
     private TourDAO tourDAO;
     private TourInstanceDAO tourInstanceDAO;
     private BookingDAO bookingDAO;
+    private RoomDAO roomDAO;
     private List<User> customersList = new ArrayList<>();
     private List<Tour> toursList = new ArrayList<>();
     private List<TourInstance> instancesList = new ArrayList<>();
@@ -63,6 +66,7 @@ public class CustomerListFragment extends Fragment {
         tourDAO = new TourDAO(requireContext());
         tourInstanceDAO = new TourInstanceDAO(requireContext());
         bookingDAO = new BookingDAO(requireContext());
+        roomDAO = new RoomDAO(requireContext());
         
         initViews(view);
         setupListeners();
@@ -238,31 +242,70 @@ public class CustomerListFragment extends Fragment {
             return;
         }
         
-        String selectedInstanceId = instancesList.get(selectedPosition - 1).getId();
-        bookingDAO.getAllBookings()
-            .thenAccept(bookings -> {
+        TourInstance selectedInstance = instancesList.get(selectedPosition - 1);
+        String selectedInstanceId = selectedInstance.getId();
+        java.util.concurrent.CompletableFuture<List<Booking>> bookingsFuture = bookingDAO.getAllBookings();
+        java.util.concurrent.CompletableFuture<List<Room>> roomsFuture = roomDAO.getAllRooms();
+
+        java.util.concurrent.CompletableFuture.allOf(bookingsFuture, roomsFuture)
+            .thenAccept(v -> {
+                List<Booking> bookings = bookingsFuture.join();
+                List<Room> rooms = roomsFuture.join();
+
                 if (bookings != null && getActivity() != null) {
-                    java.util.HashSet<String> userIdsForInstance = new java.util.HashSet<>();
-                    for (Booking booking : bookings) {
-                        if (booking != null && selectedInstanceId.equals(booking.getTourInstanceId())) {
-                            if (booking.getUserId() != null) {
-                                userIdsForInstance.add(booking.getUserId());
-                            }
+                    java.util.Map<String, Room> roomsMap = new java.util.HashMap<>();
+                    if (rooms != null) {
+                        for (Room room : rooms) {
+                            roomsMap.put(room.getId(), room);
                         }
                     }
 
-                    List<User> filteredList = new ArrayList<>();
-                    for (User customer : customersList) {
+                    java.util.LinkedHashMap<String, User> uniqueCustomers = new java.util.LinkedHashMap<>();
+                    String instanceLabel = selectedInstance.getTourName() + " - " + selectedInstance.getStartDate();
+
+                    for (Booking booking : bookings) {
+                        if (booking == null || !selectedInstanceId.equals(booking.getTourInstanceId())) {
+                            continue;
+                        }
+                        if (booking.getStatus() != null && booking.getStatus().equalsIgnoreCase("CANCELLED")) {
+                            continue;
+                        }
+
+                        String name = booking.getName();
+                        String email = booking.getEmail();
+                        String phone = booking.getPhone();
+
                         boolean matchesSearch = query.isEmpty() ||
-                                (customer.getName() != null && customer.getName().toLowerCase().contains(query)) ||
-                                (customer.getEmail() != null && customer.getEmail().toLowerCase().contains(query)) ||
-                                (customer.getPhone() != null && customer.getPhone().contains(query));
-                        boolean bookedThisInstance = customer.getId() != null && userIdsForInstance.contains(customer.getId());
-                        if (matchesSearch && bookedThisInstance) {
-                            filteredList.add(customer);
+                                (name != null && name.toLowerCase().contains(query)) ||
+                                (email != null && email.toLowerCase().contains(query)) ||
+                                (phone != null && phone.contains(query));
+                        if (!matchesSearch) {
+                            continue;
+                        }
+
+                        String key = (email != null && !email.isEmpty())
+                                ? email.toLowerCase()
+                                : (phone != null ? phone : name);
+
+                        if (!uniqueCustomers.containsKey(key)) {
+                            Room room = roomsMap.get(booking.getRoomId());
+                            User customer = new User();
+                            customer.setId(key);
+                            customer.setName(name != null ? name : "N/A");
+                            customer.setEmail(email != null ? email : "N/A");
+                            customer.setPhone(phone != null ? phone : "N/A");
+                            customer.setLastInstance(instanceLabel);
+                            customer.setRoomType(room != null ? room.getType() : "Room Type");
+                            customer.setRoomNumber(room != null ? room.getRoomNumber() : "N/A");
+                            customer.setAdultCount(Math.max(0, booking.getAdultCount()));
+                            customer.setChildCount(Math.max(0, booking.getChildCount()));
+                            String paymentStatus = booking.getDueAmount() > 0 ? "Due" : "Paid";
+                            customer.setPaymentStatus(paymentStatus);
+                            uniqueCustomers.put(key, customer);
                         }
                     }
-                    
+
+                    List<User> filteredList = new ArrayList<>(uniqueCustomers.values());
                     getActivity().runOnUiThread(() -> {
                         customerAdapter.submitList(filteredList);
                     });

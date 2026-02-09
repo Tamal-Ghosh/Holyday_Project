@@ -38,6 +38,8 @@ public class BookingAdapter extends ListAdapter<Booking, BookingAdapter.BookingV
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
         private TextView bookingId;
+        private TextView roomType;
+        private TextView roomNumber;
         private TextView customerName;
         private TextView customerEmail;
         private TextView customerPhone;
@@ -50,6 +52,8 @@ public class BookingAdapter extends ListAdapter<Booking, BookingAdapter.BookingV
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
             bookingId = itemView.findViewById(R.id.bookingId);
+            roomType = itemView.findViewById(R.id.roomType);
+            roomNumber = itemView.findViewById(R.id.roomNumber);
             customerName = itemView.findViewById(R.id.customerName);
             customerEmail = itemView.findViewById(R.id.customerEmail);
             customerPhone = itemView.findViewById(R.id.customerPhone);
@@ -62,6 +66,8 @@ public class BookingAdapter extends ListAdapter<Booking, BookingAdapter.BookingV
 
         public void bind(Booking booking, OnBookingClickListener listener) {
             bookingId.setText("Booking #" + booking.getId().substring(0, Math.min(8, booking.getId().length())));
+            roomType.setText(booking.getRoomType() != null ? booking.getRoomType() : "N/A");
+            roomNumber.setText(booking.getRoomName() != null ? booking.getRoomName() : "N/A");
             customerName.setText(booking.getCustomerName() != null ? booking.getCustomerName() : "N/A");
             customerEmail.setText(booking.getCustomerEmail() != null ? booking.getCustomerEmail() : "N/A");
             customerPhone.setText(booking.getCustomerPhone() != null ? booking.getCustomerPhone() : "N/A");

@@ -33,6 +33,9 @@ public class ManageMenuFragment extends Fragment {
         Button manageRoomsBtn = view.findViewById(R.id.manageRoomsBtn);
         manageRoomsBtn.setOnClickListener(v -> navController.navigate(R.id.manageRoomsFragment));
 
+        Button manageRoomTypesBtn = view.findViewById(R.id.manageRoomTypesBtn);
+        manageRoomTypesBtn.setOnClickListener(v -> navController.navigate(R.id.manageRoomTypesFragment));
+
         Button manageToursBtn = view.findViewById(R.id.manageToursBtn);
         manageToursBtn.setOnClickListener(v -> navController.navigate(R.id.manageToursFragment));
 

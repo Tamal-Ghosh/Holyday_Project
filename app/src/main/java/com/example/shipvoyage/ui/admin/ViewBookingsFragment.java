@@ -226,6 +226,7 @@ public class ViewBookingsFragment extends Fragment {
                 Room room = roomsMap.get(booking.getRoomId());
                 if (room != null) {
                     booking.setRoomName(room.getRoomNumber());
+                    booking.setRoomType(room.getType());
                 }
 
                 if (booking.getSelectedRooms() == null || booking.getSelectedRooms().isEmpty()) {
@@ -292,19 +293,18 @@ public class ViewBookingsFragment extends Fragment {
         TextInputEditText nameInput = dialogView.findViewById(R.id.nameInput);
         TextInputEditText phoneInput = dialogView.findViewById(R.id.phoneInput);
         TextInputEditText emailInput = dialogView.findViewById(R.id.emailInput);
+        TextInputEditText adultCountInput = dialogView.findViewById(R.id.adultCountInput);
+        TextInputEditText childCountInput = dialogView.findViewById(R.id.childCountInput);
         Spinner paymentMethodSpinner = dialogView.findViewById(R.id.paymentMethodSpinner);
-        TextView roomPriceText = dialogView.findViewById(R.id.roomPriceText);
-        TextInputEditText discountInput = dialogView.findViewById(R.id.discountInput);
-        TextView totalPaymentText = dialogView.findViewById(R.id.totalPaymentText);
-        TextInputEditText paidAmountInput = dialogView.findViewById(R.id.paidAmountInput);
+        TextInputEditText paymentDetailsInput = dialogView.findViewById(R.id.paymentDetailsInput);
+        TextInputEditText totalPaymentInput = dialogView.findViewById(R.id.totalPaymentInput);
+        TextInputEditText advanceAmountInput = dialogView.findViewById(R.id.advanceAmountInput);
         TextView dueAmountText = dialogView.findViewById(R.id.dueAmountText);
 
         String roomInfo = booking.getSelectedRoomsString();
         selectedRoomInfoText.setText("Selected Rooms: " + roomInfo);
 
-        double baseTotal = booking.getTotalPayment() + booking.getDiscount();
-        roomPriceText.setText(String.format("$%.2f", baseTotal));
-        totalPaymentText.setText(String.format("$%.2f", booking.getTotalPayment()));
+        totalPaymentInput.setText(String.format("%.2f", booking.getTotalPayment()));
 
         String[] paymentMethods = {"Cash", "Credit Card", "Debit Card", "Bank Transfer", "Mobile Payment"};
         ArrayAdapter<String> paymentAdapter = new ArrayAdapter<>(requireContext(),
@@ -315,8 +315,10 @@ public class ViewBookingsFragment extends Fragment {
         nameInput.setText(booking.getCustomerName());
         phoneInput.setText(booking.getCustomerPhone());
         emailInput.setText(booking.getCustomerEmail());
-        discountInput.setText(String.format("%.2f", booking.getDiscount()));
-        paidAmountInput.setText(String.format("%.2f", booking.getPaidAmount()));
+        adultCountInput.setText(booking.getAdultCount() > 0 ? String.valueOf(booking.getAdultCount()) : "");
+        childCountInput.setText(booking.getChildCount() > 0 ? String.valueOf(booking.getChildCount()) : "");
+        paymentDetailsInput.setText(booking.getPaymentDetails() != null ? booking.getPaymentDetails() : "");
+        advanceAmountInput.setText(String.format("%.2f", booking.getPaidAmount()));
 
         for (int i = 0; i < paymentMethods.length; i++) {
             if (paymentMethods[i].equalsIgnoreCase(booking.getPaymentMethod())) {
@@ -333,22 +335,24 @@ public class ViewBookingsFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    double discount = discountInput.getText().toString().isEmpty() ? 0 :
-                            Double.parseDouble(discountInput.getText().toString());
-                    double total = baseTotal - discount;
-                    totalPaymentText.setText(String.format("$%.2f", Math.max(0, total)));
+                        double total = totalPaymentInput.getText().toString().isEmpty() ? 0 :
+                            Double.parseDouble(totalPaymentInput.getText().toString());
 
-                    double paid = paidAmountInput.getText().toString().isEmpty() ? 0 :
-                            Double.parseDouble(paidAmountInput.getText().toString());
-                    double due = total - paid;
-                    dueAmountText.setText(String.format("$%.2f", Math.max(0, due)));
+                        double advance = advanceAmountInput.getText().toString().isEmpty() ? 0 :
+                            Double.parseDouble(advanceAmountInput.getText().toString());
+                        double due = total - advance;
+                        dueAmountText.setText(String.format("৳%.2f", Math.max(0, due)));
                 } catch (NumberFormatException e) {
                     // Invalid number
                 }
             }
         };
-        discountInput.addTextChangedListener(calculationWatcher);
-        paidAmountInput.addTextChangedListener(calculationWatcher);
+                totalPaymentInput.addTextChangedListener(calculationWatcher);
+        advanceAmountInput.addTextChangedListener(calculationWatcher);
+
+        // Calculate and display initial due amount
+        double initialDue = booking.getTotalPayment() - booking.getPaidAmount();
+        dueAmountText.setText(String.format("৳%.2f", Math.max(0, initialDue)));
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(dialogView)
@@ -362,28 +366,35 @@ public class ViewBookingsFragment extends Fragment {
         saveButton.setOnClickListener(v -> {
             String name = nameInput.getText().toString().trim();
             String phone = phoneInput.getText().toString().trim();
-            String email = emailInput.getText().toString().trim();
+                String email = emailInput.getText().toString().trim();
 
-            if (name.isEmpty() || phone.isEmpty() || email.isEmpty()) {
-                Toast.makeText(requireContext(), "Please fill all required fields", Toast.LENGTH_SHORT).show();
+                if (name.isEmpty() || phone.isEmpty()) {
+                Toast.makeText(requireContext(), "Name and Phone are required", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             try {
-                double discount = discountInput.getText().toString().isEmpty() ? 0 :
-                        Double.parseDouble(discountInput.getText().toString());
-                double total = baseTotal - discount;
-                double paid = paidAmountInput.getText().toString().isEmpty() ? 0 :
-                        Double.parseDouble(paidAmountInput.getText().toString());
-                double due = total - paid;
+                int adultCount = adultCountInput.getText().toString().trim().isEmpty() ? 0 :
+                    Integer.parseInt(adultCountInput.getText().toString().trim());
+                int childCount = childCountInput.getText().toString().trim().isEmpty() ? 0 :
+                    Integer.parseInt(childCountInput.getText().toString().trim());
+                double total = totalPaymentInput.getText().toString().isEmpty() ? 0 :
+                    Double.parseDouble(totalPaymentInput.getText().toString());
+                double advance = advanceAmountInput.getText().toString().isEmpty() ? 0 :
+                        Double.parseDouble(advanceAmountInput.getText().toString());
+                double due = total - advance;
+                String paymentDetails = paymentDetailsInput.getText().toString().trim();
 
                 booking.setCustomerName(name);
                 booking.setCustomerPhone(phone);
                 booking.setCustomerEmail(email);
                 booking.setPaymentMethod(paymentMethodSpinner.getSelectedItem().toString());
-                booking.setDiscount(discount);
+                booking.setPaymentDetails(paymentDetails);
+                booking.setAdultCount(adultCount);
+                booking.setChildCount(childCount);
+                booking.setDiscount(0);
                 booking.setTotalPayment(Math.max(0, total));
-                booking.setPaidAmount(paid);
+                booking.setPaidAmount(advance);
                 booking.setDueAmount(Math.max(0, due));
 
                 bookingDAO.updateBooking(booking.getId(), booking).thenAccept(success -> {
@@ -423,8 +434,7 @@ public class ViewBookingsFragment extends Fragment {
                 "\nPayment: " + (booking.getPaymentMethod() != null ? booking.getPaymentMethod() : "N/A") +
                 "\nTotal: $" + String.format("%.2f", booking.getTotalPayment()) +
                 "\nPaid: $" + String.format("%.2f", booking.getPaidAmount()) +
-                "\nDue: $" + String.format("%.2f", booking.getDueAmount()) +
-                "\nDiscount: $" + String.format("%.2f", booking.getDiscount());
+            "\nDue: $" + String.format("%.2f", booking.getDueAmount());
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Booking Details")
@@ -473,6 +483,7 @@ public class ViewBookingsFragment extends Fragment {
         Button continueButton = dialogView.findViewById(R.id.continueButton);
 
         List<String> instanceNames = new ArrayList<>();
+        instanceNames.add("None");
         for (TourInstance instance : instancesList) {
             String name = (instance.getTourName() != null ? instance.getTourName() : "Tour") + 
                          " (" + instance.getStartDate() + ")";
@@ -492,8 +503,13 @@ public class ViewBookingsFragment extends Fragment {
 
         continueButton.setOnClickListener(v -> {
             int selectedPosition = instanceSpinner.getSelectedItemPosition();
-            if (selectedPosition >= 0 && selectedPosition < instancesList.size()) {
-                TourInstance selectedInstance = instancesList.get(selectedPosition);
+            if (selectedPosition == 0) {
+                dialog.dismiss();
+                return;
+            }
+            int instanceIndex = selectedPosition - 1;
+            if (instanceIndex >= 0 && instanceIndex < instancesList.size()) {
+                TourInstance selectedInstance = instancesList.get(instanceIndex);
                 dialog.dismiss();
                 showRoomSelectionDialog(selectedInstance);
             }
@@ -517,11 +533,12 @@ public class ViewBookingsFragment extends Fragment {
         TextInputEditText nameInput = dialogView.findViewById(R.id.nameInput);
         TextInputEditText phoneInput = dialogView.findViewById(R.id.phoneInput);
         TextInputEditText emailInput = dialogView.findViewById(R.id.emailInput);
+        TextInputEditText adultCountInput = dialogView.findViewById(R.id.adultCountInput);
+        TextInputEditText childCountInput = dialogView.findViewById(R.id.childCountInput);
         Spinner paymentMethodSpinner = dialogView.findViewById(R.id.paymentMethodSpinner);
-        TextView roomPriceText = dialogView.findViewById(R.id.roomPriceText);
-        TextInputEditText discountInput = dialogView.findViewById(R.id.discountInput);
-        TextView totalPaymentText = dialogView.findViewById(R.id.totalPaymentText);
-        TextInputEditText paidAmountInput = dialogView.findViewById(R.id.paidAmountInput);
+        TextInputEditText paymentDetailsInput = dialogView.findViewById(R.id.paymentDetailsInput);
+        TextInputEditText totalPaymentInput = dialogView.findViewById(R.id.totalPaymentInput);
+        TextInputEditText advanceAmountInput = dialogView.findViewById(R.id.advanceAmountInput);
         TextView dueAmountText = dialogView.findViewById(R.id.dueAmountText);
 
         StringBuilder roomInfo = new StringBuilder();
@@ -530,9 +547,6 @@ public class ViewBookingsFragment extends Fragment {
             roomInfo.append(room.getRoomNumber()).append(" (").append(room.getType()).append(")");
         }
         selectedRoomInfoText.setText("Selected Rooms: " + roomInfo.toString());
-
-        roomPriceText.setText(String.format("$%.2f", totalPrice));
-        totalPaymentText.setText(String.format("$%.2f", totalPrice));
 
         String[] paymentMethods = {"Cash", "Credit Card", "Debit Card", "Bank Transfer", "Mobile Payment"};
         ArrayAdapter<String> paymentAdapter = new ArrayAdapter<>(requireContext(), 
@@ -548,22 +562,20 @@ public class ViewBookingsFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    double discount = discountInput.getText().toString().isEmpty() ? 0 : 
-                            Double.parseDouble(discountInput.getText().toString());
-                    double total = totalPrice - discount;
-                    totalPaymentText.setText(String.format("$%.2f", Math.max(0, total)));
+                        double total = totalPaymentInput.getText().toString().isEmpty() ? 0 : 
+                            Double.parseDouble(totalPaymentInput.getText().toString());
 
-                    double paid = paidAmountInput.getText().toString().isEmpty() ? 0 : 
-                            Double.parseDouble(paidAmountInput.getText().toString());
-                    double due = total - paid;
-                    dueAmountText.setText(String.format("$%.2f", Math.max(0, due)));
+                        double advance = advanceAmountInput.getText().toString().isEmpty() ? 0 : 
+                            Double.parseDouble(advanceAmountInput.getText().toString());
+                        double due = total - advance;
+                        dueAmountText.setText(String.format("৳%.2f", Math.max(0, due)));
                 } catch (NumberFormatException e) {
                     // Invalid number
                 }
             }
         };
-        discountInput.addTextChangedListener(calculationWatcher);
-        paidAmountInput.addTextChangedListener(calculationWatcher);
+        totalPaymentInput.addTextChangedListener(calculationWatcher);
+        advanceAmountInput.addTextChangedListener(calculationWatcher);
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(dialogView)
@@ -577,34 +589,41 @@ public class ViewBookingsFragment extends Fragment {
         saveButton.setOnClickListener(v -> {
             String name = nameInput.getText().toString().trim();
             String phone = phoneInput.getText().toString().trim();
-            String email = emailInput.getText().toString().trim();
+                String email = emailInput.getText().toString().trim();
 
-            if (name.isEmpty() || phone.isEmpty() || email.isEmpty()) {
-                Toast.makeText(requireContext(), "Please fill all required fields", Toast.LENGTH_SHORT).show();
+                if (name.isEmpty() || phone.isEmpty()) {
+                Toast.makeText(requireContext(), "Name and Phone are required", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             try {
-                double discount = discountInput.getText().toString().isEmpty() ? 0 : 
-                        Double.parseDouble(discountInput.getText().toString());
-                double total = totalPrice - discount;
-                double paid = paidAmountInput.getText().toString().isEmpty() ? 0 : 
-                        Double.parseDouble(paidAmountInput.getText().toString());
-                double due = total - paid;
+                int adultCount = adultCountInput.getText().toString().trim().isEmpty() ? 0 :
+                    Integer.parseInt(adultCountInput.getText().toString().trim());
+                int childCount = childCountInput.getText().toString().trim().isEmpty() ? 0 :
+                    Integer.parseInt(childCountInput.getText().toString().trim());
+                double total = totalPaymentInput.getText().toString().isEmpty() ? 0 : 
+                    Double.parseDouble(totalPaymentInput.getText().toString());
+                double advance = advanceAmountInput.getText().toString().isEmpty() ? 0 : 
+                        Double.parseDouble(advanceAmountInput.getText().toString());
+                double due = total - advance;
+                String paymentDetails = paymentDetailsInput.getText().toString().trim();
 
                 Room firstRoom = selectedRooms.get(0);
                 Booking booking = new Booking(
-                        java.util.UUID.randomUUID().toString(),
-                        tourInstance.getId(),
-                        firstRoom.getId(),
-                        name,
-                        phone,
-                        email,
-                        paymentMethodSpinner.getSelectedItem().toString(),
-                        Math.max(0, total),
-                        paid,
-                        Math.max(0, due),
-                        discount
+                    java.util.UUID.randomUUID().toString(),
+                    tourInstance.getId(),
+                    firstRoom.getId(),
+                    name,
+                    phone,
+                    email,
+                    paymentMethodSpinner.getSelectedItem().toString(),
+                    paymentDetails,
+                    Math.max(0, total),
+                    advance,
+                    Math.max(0, due),
+                    0,
+                    adultCount,
+                    childCount
                 );
 
                 saveBooking(booking, dialog);

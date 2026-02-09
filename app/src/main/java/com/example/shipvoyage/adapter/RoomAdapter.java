@@ -27,7 +27,6 @@ public class RoomAdapter extends ListAdapter<Room, RoomAdapter.RoomViewHolder> {
                 return oldItem.getId().equals(newItem.getId()) &&
                         oldItem.getRoomNumber().equals(newItem.getRoomNumber()) &&
                         oldItem.getType().equals(newItem.getType()) &&
-                        oldItem.getPrice() == newItem.getPrice() &&
                         oldItem.isAvailability() == newItem.isAvailability();
             }
         });
@@ -47,23 +46,20 @@ public class RoomAdapter extends ListAdapter<Room, RoomAdapter.RoomViewHolder> {
     static class RoomViewHolder extends RecyclerView.ViewHolder {
         private final TextView roomNumber;
         private final TextView roomType;
-        private final TextView roomPrice;
         private final ImageButton editButton;
         private final ImageButton deleteButton;
         RoomViewHolder(View itemView) {
             super(itemView);
             roomNumber = itemView.findViewById(R.id.roomNumber);
             roomType = itemView.findViewById(R.id.roomType);
-            roomPrice = itemView.findViewById(R.id.roomPrice);
             editButton = itemView.findViewById(R.id.editButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
         }
         void bind(Room room, OnRoomActionListener listener) {
             roomNumber.setText(room.getRoomNumber());
             roomType.setText(room.getType());
-            roomPrice.setText(String.format("৳%.0f", room.getPrice()));
             editButton.setOnClickListener(v -> listener.onEdit(room));
             deleteButton.setOnClickListener(v -> listener.onDelete(room));
         }
     }
-}
+}

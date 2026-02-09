@@ -51,6 +51,11 @@
         android:label="Manage Rooms" />
 
     <fragment
+        android:id="@+id/manageRoomTypesFragment"
+        android:name="com.example.shipvoyage.ui.admin.ManageRoomTypesFragment"
+        android:label="Manage Room Types" />
+
+    <fragment
         android:id="@+id/manageBookingsFragment"
         android:name="com.example.shipvoyage.ui.admin.ManageBookingsFragment"
         android:label="Manage Bookings" />

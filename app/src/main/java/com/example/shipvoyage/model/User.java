@@ -11,6 +11,10 @@ public class User {
     public String profileImagePath;
     public String lastInstance;
     public String paymentStatus;
+    public String roomType;
+    public String roomNumber;
+    public int adultCount;
+    public int childCount;
     public User() {}
     public User(String id, String username, String email, String phone, String role, long createdAt, String profileImagePath) {
         this.id = id;
@@ -90,6 +94,38 @@ public class User {
     }
     public void setPaymentStatus(String paymentStatus) {
         this.paymentStatus = paymentStatus;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public int getAdultCount() {
+        return adultCount;
+    }
+
+    public void setAdultCount(int adultCount) {
+        this.adultCount = adultCount;
+    }
+
+    public int getChildCount() {
+        return childCount;
+    }
+
+    public void setChildCount(int childCount) {
+        this.childCount = childCount;
     }
 
     public String getPassword() {

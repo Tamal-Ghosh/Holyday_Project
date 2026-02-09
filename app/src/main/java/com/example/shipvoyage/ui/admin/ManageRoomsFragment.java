@@ -21,8 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.shipvoyage.R;
 import com.example.shipvoyage.adapter.RoomAdapter;
 import com.example.shipvoyage.dao.RoomDAO;
+import com.example.shipvoyage.dao.RoomTypeDAO;
 import com.example.shipvoyage.dao.ShipDAO;
 import com.example.shipvoyage.model.Room;
+import com.example.shipvoyage.model.RoomType;
 import com.example.shipvoyage.model.Ship;
 import com.example.shipvoyage.util.ThreadPool;
 
@@ -31,13 +33,17 @@ import java.util.List;
 
 public class ManageRoomsFragment extends Fragment {
     private RecyclerView roomsRecyclerView;
-    private EditText roomNumberField, priceField, searchField;
+    private EditText roomNumberField, searchField;
     private Spinner shipSpinner, typeSpinner;
     private Button saveBtn, cancelBtn, searchBtn, addToggleBtn;
     private View formContainer;
     private RoomDAO roomDAO;
+    private RoomTypeDAO roomTypeDAO;
     private ShipDAO shipDAO;
     private List<Room> roomsList = new ArrayList<>();
+    private List<RoomType> roomTypesList = new ArrayList<>();
+    private List<String> roomTypeNames = new ArrayList<>();
+    private ArrayAdapter<String> typeAdapter;
     private List<Ship> shipsList = new ArrayList<>();
     private RoomAdapter roomAdapter;
     private String editingRoomId = null;
@@ -54,9 +60,11 @@ public class ManageRoomsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         roomDAO = new RoomDAO(requireContext());
+        roomTypeDAO = new RoomTypeDAO(requireContext());
         shipDAO = new ShipDAO(requireContext());
         initViews(view);
         setupListeners();
+        loadRoomTypes();
         loadShips();
         loadRooms();
     }
@@ -65,7 +73,6 @@ public class ManageRoomsFragment extends Fragment {
         roomsRecyclerView = view.findViewById(R.id.roomsRecyclerView);
         roomNumberField = view.findViewById(R.id.roomNumberField);
         typeSpinner = view.findViewById(R.id.typeSpinner);
-        priceField = view.findViewById(R.id.priceField);
         searchField = view.findViewById(R.id.searchField);
         shipSpinner = view.findViewById(R.id.shipSpinner);
         saveBtn = view.findViewById(R.id.saveBtn);
@@ -75,33 +82,15 @@ public class ManageRoomsFragment extends Fragment {
         formContainer = view.findViewById(R.id.formContainer);
 
         roomsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        
-        // Setup room type spinner
-        List<String> roomTypes = new ArrayList<>();
-        roomTypes.add("None");
-        roomTypes.add("Single");
-        roomTypes.add("Double");
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, roomTypes);
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        typeSpinner.setAdapter(typeAdapter);
-        
+        initTypeSpinner();
+
         roomAdapter = new RoomAdapter(new RoomAdapter.OnRoomActionListener() {
             @Override
             public void onEdit(Room room) {
                 editingRoomId = room.getId();
                 roomNumberField.setText(room.getRoomNumber());
                 
-                // Set room type spinner
-                String roomType = room.getType();
-                if (roomType.equalsIgnoreCase("Single")) {
-                    typeSpinner.setSelection(1);
-                } else if (roomType.equalsIgnoreCase("Double")) {
-                    typeSpinner.setSelection(2);
-                } else {
-                    typeSpinner.setSelection(0);
-                }
-                
-                priceField.setText(String.valueOf(room.getPrice()));
+                setTypeSpinnerSelection(room.getType());
                 
                 // Set ship spinner selection (add 1 to account for "None" at position 0)
                 for (int i = 0; i < shipsList.size(); i++) {
@@ -178,6 +167,68 @@ public class ManageRoomsFragment extends Fragment {
         });
     }
 
+    private void initTypeSpinner() {
+        roomTypeNames.clear();
+        roomTypeNames.add("None");
+        typeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, roomTypeNames);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(typeAdapter);
+    }
+
+    private void loadRoomTypes() {
+        roomTypeDAO.getAllRoomTypes()
+            .thenAccept(types -> {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        roomTypesList.clear();
+                        if (types != null) {
+                            roomTypesList.addAll(types);
+                        }
+                        updateTypeSpinner();
+                    });
+                }
+            })
+            .exceptionally(e -> {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Failed to load room types", Toast.LENGTH_SHORT).show();
+                    });
+                }
+                return null;
+            });
+    }
+
+    private void updateTypeSpinner() {
+        roomTypeNames.clear();
+        roomTypeNames.add("None");
+        for (RoomType type : roomTypesList) {
+            if (type != null && type.getName() != null && !type.getName().trim().isEmpty()) {
+                roomTypeNames.add(type.getName());
+            }
+        }
+        typeAdapter.notifyDataSetChanged();
+    }
+
+    private void setTypeSpinnerSelection(String type) {
+        if (type == null || type.trim().isEmpty()) {
+            typeSpinner.setSelection(0);
+            return;
+        }
+        int index = 0;
+        for (int i = 0; i < roomTypeNames.size(); i++) {
+            if (type.equalsIgnoreCase(roomTypeNames.get(i))) {
+                index = i;
+                break;
+            }
+        }
+        if (index == 0) {
+            roomTypeNames.add(type);
+            typeAdapter.notifyDataSetChanged();
+            index = roomTypeNames.size() - 1;
+        }
+        typeSpinner.setSelection(index);
+    }
+
     private void loadShips() {
         shipDAO.getAll(Ship.class)
             .thenAccept(ships -> {
@@ -242,15 +293,13 @@ public class ManageRoomsFragment extends Fragment {
 
     private void saveRoom() {
         String roomNumber = roomNumberField.getText().toString().trim();
-        String priceStr = priceField.getText().toString().trim();
 
-        if (roomNumber.isEmpty() || priceStr.isEmpty() || shipSpinner.getSelectedItemPosition() == 0 || typeSpinner.getSelectedItemPosition() == 0) {
+        if (roomNumber.isEmpty() || shipSpinner.getSelectedItemPosition() == 0 || typeSpinner.getSelectedItemPosition() == 0) {
             Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
-            double price = Double.parseDouble(priceStr);
             
             // Get selected ship
             int spinnerPosition = shipSpinner.getSelectedItemPosition();
@@ -285,7 +334,7 @@ public class ManageRoomsFragment extends Fragment {
             }
 
             String roomId = editingRoomId != null ? editingRoomId : java.util.UUID.randomUUID().toString();
-            Room room = new Room(roomId, selectedShip.getId(), roomNumber, type, price, true);
+            Room room = new Room(roomId, selectedShip.getId(), roomNumber, type, true);
             
             if (editingRoomId != null) {
                 roomDAO.updateRoom(roomId, room)
@@ -342,8 +391,8 @@ public class ManageRoomsFragment extends Fragment {
                         return null;
                     });
             }
-        } catch (NumberFormatException e) {
-            Toast.makeText(requireContext(), "Invalid price", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error saving room", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -351,7 +400,6 @@ public class ManageRoomsFragment extends Fragment {
         editingRoomId = null;
         roomNumberField.setText("");
         typeSpinner.setSelection(0);
-        priceField.setText("");
         toggleForm(false);
     }
 
@@ -367,8 +415,15 @@ public class ManageRoomsFragment extends Fragment {
     private void performSearch() {
         String query = searchField.getText().toString().trim().toLowerCase();
         List<Room> filteredRooms = new ArrayList<>();
+        
+        // If no ship selected (None), show empty list
+        if (selectedShipId == null) {
+            roomAdapter.submitList(new ArrayList<>());
+            return;
+        }
+        
         for (Room room : roomsList) {
-            if ((selectedShipId == null || room.getShipId().equals(selectedShipId)) &&
+            if (room.getShipId().equals(selectedShipId) &&
                 (query.isEmpty() || room.getRoomNumber().toLowerCase().contains(query) ||
                 room.getType().toLowerCase().contains(query))) {
                 filteredRooms.add(room);
@@ -380,8 +435,15 @@ public class ManageRoomsFragment extends Fragment {
     private void filterRoomsByShip() {
         String query = searchField.getText().toString().trim().toLowerCase();
         List<Room> filteredRooms = new ArrayList<>();
+        
+        // If no ship selected (None), show empty list
+        if (selectedShipId == null) {
+            roomAdapter.submitList(new ArrayList<>());
+            return;
+        }
+        
         for (Room room : roomsList) {
-            if ((selectedShipId == null || room.getShipId().equals(selectedShipId)) &&
+            if (room.getShipId().equals(selectedShipId) &&
                 (query.isEmpty() || room.getRoomNumber().toLowerCase().contains(query) ||
                 room.getType().toLowerCase().contains(query))) {
                 filteredRooms.add(room);

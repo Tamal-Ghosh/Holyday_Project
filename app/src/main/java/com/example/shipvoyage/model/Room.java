@@ -15,18 +15,14 @@ public class Room {
     @SerializedName("type")
     public String type;
     
-    @SerializedName("price")
-    public double price;
-    
     @SerializedName("is_available")
     public boolean availability;
     public Room() {}
-    public Room(String id, String shipId, String roomNumber, String type, double price, boolean availability) {
+    public Room(String id, String shipId, String roomNumber, String type, boolean availability) {
         this.id = id;
         this.shipId = shipId;
         this.roomNumber = roomNumber;
         this.type = type;
-        this.price = price;
         this.availability = availability;
     }
     public String getId() {
@@ -53,12 +49,12 @@ public class Room {
     public void setType(String type) {
         this.type = type;
     }
+    
+    // Dummy method for backward compatibility with BookingRoomAdapter
     public double getPrice() {
-        return price;
+        return 0;
     }
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    
     public boolean isAvailability() {
         return availability;
     }
@@ -71,7 +67,6 @@ public class Room {
         map.put("ship_id", shipId);
         map.put("name", roomNumber);
         map.put("type", type);
-        map.put("price", price);
         map.put("is_available", availability);
         return map;
     }

@@ -22,6 +22,9 @@ public class Booking {
     
     @SerializedName("payment_method")
     public String paymentMethod;
+
+    @SerializedName("payment_details")
+    public String paymentDetails;
     
     @SerializedName("total_payment")
     public double totalPayment;
@@ -34,6 +37,12 @@ public class Booking {
     
     @SerializedName("discount")
     public double discount;
+    
+    @SerializedName("adult_count")
+    public int adultCount;
+    
+    @SerializedName("child_count")
+    public int childCount;
     
     @SerializedName("status")
     public String status;
@@ -58,8 +67,9 @@ public class Booking {
     public Booking() {}
     
     public Booking(String id, String tourInstanceId, String roomId, String name, 
-                   String phone, String email, String paymentMethod, 
-                   double totalPayment, double paidAmount, double dueAmount, double discount) {
+                   String phone, String email, String paymentMethod, String paymentDetails,
+                   double totalPayment, double paidAmount, double dueAmount, double discount,
+                   int adultCount, int childCount) {
         this.id = id;
         this.tourInstanceId = tourInstanceId;
         this.roomId = roomId;
@@ -67,10 +77,13 @@ public class Booking {
         this.phone = phone;
         this.email = email;
         this.paymentMethod = paymentMethod;
+        this.paymentDetails = paymentDetails;
         this.totalPayment = totalPayment;
         this.paidAmount = paidAmount;
         this.dueAmount = dueAmount;
         this.discount = discount;
+        this.adultCount = adultCount;
+        this.childCount = childCount;
         this.status = "PENDING";
         // Sync legacy fields
         this.customerName = name;
@@ -100,6 +113,9 @@ public class Booking {
     
     public String getPaymentMethod() { return paymentMethod; }
     public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public String getPaymentDetails() { return paymentDetails; }
+    public void setPaymentDetails(String paymentDetails) { this.paymentDetails = paymentDetails; }
     
     public double getTotalPayment() { return totalPayment; }
     public void setTotalPayment(double totalPayment) { this.totalPayment = totalPayment; }
@@ -112,6 +128,12 @@ public class Booking {
     
     public double getDiscount() { return discount; }
     public void setDiscount(double discount) { this.discount = discount; }
+    
+    public int getAdultCount() { return adultCount; }
+    public void setAdultCount(int adultCount) { this.adultCount = adultCount; }
+    
+    public int getChildCount() { return childCount; }
+    public void setChildCount(int childCount) { this.childCount = childCount; }
     
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
